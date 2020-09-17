@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<environments default="mysql">
+		<environment id="mysql">
+			<transactionManager type="JDBC">
+
+			</transactionManager>
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql://localhost:3306/twohand?serverTimezone=UTC"/>
+				<property name="username" value="root"/>
+				<property name="password" value="220511"/>
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="com/hhx/dao/IUserDao.xml"/>
+		<mapper resource="com/hhx/dao/IGoodsDao.xml"></mapper>
+	</mappers>
+<!--	&lt;!&ndash; 配置环境 &ndash;&gt;-->
+<!--	<environments default="development">-->
+<!--		<environment id="development">-->
+<!--			&lt;!&ndash; 使用JDBC的事务管理 &ndash;&gt;-->
+<!--			<transactionManager type="JDBC"/>-->
+<!--			<dataSource type="POOLED">-->
+<!--				&lt;!&ndash; MySQL数据库驱动 &ndash;&gt;-->
+<!--				<property name="driver" value="com.mysql.jdbc.Driver"/>-->
+<!--				&lt;!&ndash; 连接数据库的URL &ndash;&gt;-->
+<!--				<property name="url" value="jdbc:mysql://localhost:3306/testmybatis?serverTimezone=UTC"/>-->
+<!--				<property name="username" value="root"/>-->
+<!--				<property name="password" value="220511"/>-->
+<!--			</dataSource>-->
+<!--		</environment>-->
+<!--	</environments>-->
+<!--	<mappers>-->
+<!--	&lt;!&ndash; 映射文件的位置 &ndash;&gt;-->
+<!--	<mapper resource="com/hhx/dao/IUserDao.xml"/>-->
+<!--	</mappers>-->
+</configuration>

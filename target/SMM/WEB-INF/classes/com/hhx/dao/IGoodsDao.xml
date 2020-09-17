@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhx.dao.IGoodsDao">
+
+<!--	有用户信息的goods-->
+	<resultMap id="detailgoods" type="com.hhx.body.Goods">
+		<id property="No" column="No"></id>
+		<result property="type" column="type"></result>
+		<result property="name" column="name"></result>
+		<result property="price" column="price"></result>
+		<result property="desc" column="desc"></result>
+		<result property="pic" column="pic"></result>
+		<association property="user" column="No" javaType="com.hhx.body.User">
+			<id property="ID" column="ID"></id>
+			<result property="acc" column="acc"></result>
+			<result property="pic" column="userpic"></result>
+		</association>
+	</resultMap>
+
+	<resultMap id="comanduser" type="com.hhx.body.Comments">
+		<id property="ID" column="ID"></id>
+		<result property="No" column="No"></result>
+		<result property="time" column="time"></result>
+		<result property="content" column="content"></result>
+		<association property="user" javaType="com.hhx.body.User">
+			<result property="ID" column="ID"></result>
+			<result property="acc" column="acc"></result>
+			<result property="pic" column="pic"></result>
+		</association>
+	</resultMap>
+
+
+
+    <select id="freshtypePage" parameterType="com.hhx.body.Page" resultType="com.hhx.body.Goods">
+		SELECT * FROM goods
+			WHERE TYPE= #{type}
+			ORDER BY NO DESC
+			LIMIT #{from},#{to}
+	</select>
+
+	<!-- 获得有多少页 -->
+	<select id="getPageNum" resultType="Integer">
+		SELECT COUNT(goods.`No`)
+			FROM goods
+	</select>
+
+	<!-- 获得单个商品信息 -->
+	<select id="getmoreinfo" parameterType="String" resultMap="detailgoods" >
+		SELECT goods.*,`user`.`ID`,`user`.`acc`,`user`.`pic` userpic FROM goods,distribute,`user`
+	WHERE goods.`No`=#{No} AND goods.`No`=distribute.`No` AND user.`ID`=distribute.`ID`
+	</select>
+
+	<!-- 活得购买过得数量 -->
+	<select id="getbuynum"  parameterType="String" resultType="Integer">
+		SELECT COUNT(ID) FROM trades
+		WHERE ID =#{ID}
+	</select>
+
+	<!-- 活得评论 -->
+	<select id="getcomments" parameterType="String"  resultType="com.hhx.body.Comments">
+		SELECT comments.*,`user`.`acc` username,`user`.`pic` userpic FROM comments,`user`
+		WHERE NO=#{NO} AND comments.`ID`=`user`.`ID`
+	</select>
+
+	<!-- 评论人数 -->
+	<select id="getcomnum" parameterType="String" resultType="Integer">
+	SELECT COUNT(No) FROM comments
+		WHERE No =#{No}
+	</select>
+
+	<!-- 购买人数 -->
+	<select id="getsinglebnum" parameterType="String" resultType="Integer">
+	SELECT COUNT(No) FROM trades
+		WHERE No =#{No}
+	</select>
+
+	<!-- 查询发布数量 -->
+	<select id="getdisnum" parameterType="String" resultType="Integer">
+	SELECT COUNT(ID) FROM distribute
+		WHERE ID =#{ID}
+	</select>
+
+	<!-- 获得某个用户购买的所有 -->
+	<select id="buyedlist"  parameterType="String" resultType="com.hhx.body.trades">
+		select * from trades
+		where ID=#{ID}
+	</select>
+
+	<!-- 获得发布列表 -->
+	<select id="getdis" parameterType="String" resultType="com.hhx.body.distribute">
+		SELECT distribute.*,goods.`pic` FROM distribute,goods
+	WHERE ID =#{ID} AND goods.`No`=distribute.`No`
+	</select>
+
+	<!-- 插入订单 -->
+	<insert id="addtrades" parameterType="com.hhx.body.trades">
+		insert into trades (tradeNo,ID,acc,time,name,No) values(#{tradeNo},#{ID},#{acc},#{time},#{name},#{No})
+	</insert>
+
+	<!-- 添加商品 -->
+	<insert id="addgoods" parameterType="com.hhx.body.Goods">
+		insert into goods (`No`,`type`,`name`,`price`,`desc`,`comments`,`pic`) values(#{No},#{type},#{name},#{price},#{desc},#{comments},#{pic})
+	</insert>
+
+	<!-- 发布商品 -->
+	<insert id="distribute" parameterType="com.hhx.body.distribute">
+		insert into distribute (No,ID,acc,time) values(#{No},#{ID},#{acc},#{time})
+	</insert>
+
+	<select id="findgoods"  parameterType="com.hhx.body.Page" resultType="com.hhx.body.Goods">
+		select * from goods where name like CONCAT('%',#{search},'%')
+	</select>
+
+	<update id="upinfo" parameterType="com.hhx.body.Goods">
+		UPDATE `goods`
+	SET `type`=#{type} ,`price`=#{price},`name`=#{name},`desc`=#{desc},`pic`=#{pic}
+	WHERE `no`=#{No}
+	</update>
+
+
+
+
+</mapper>

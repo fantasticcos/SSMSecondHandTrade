@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhx.dao.IUserDao">
+
+    <select id="getAll"  resultType="com.hhx.body.User">
+        SELECT * FROM `user`
+
+    </select>
+
+<!--    注意-->
+    <select id="indentify" parameterType="com.hhx.body.User" resultType="com.hhx.body.User">
+		select * from `user` where ID = #{ID} and password =#{password}
+	</select>
+
+    <!-- 注册用户 -->
+    <insert id="adduser" parameterType="com.hhx.body.User">
+		insert into user (ID ,acc,password,pic) values(#{ID},#{acc},#{password},#{pic})
+	</insert>
+
+    <!-- 删除商品 -->
+    <delete id="deletegood" parameterType="String">
+		delete from goods where No=#{No}
+	</delete>
+    <!-- 删除发布 -->
+    <delete id="deletedis" parameterType="String">
+	delete from distribute where No=#{No}
+	</delete>
+    <!-- 删除相关评论 -->
+    <delete id="deletecom" parameterType="String">
+		delete from comments where No=#{No}
+	</delete>
+
+	<!-- 插入评论 -->
+	<insert id="addcomment" parameterType="com.hhx.body.Comments" >
+		insert into comments (ID,No,time,content,loc,parentid) values(#{ID},#{No},#{time},#{content},#{loc},#{parentid})
+	</insert>
+<!--	查询最近一周内的购买动态-->
+	<select id="actbuy" resultType="com.hhx.body.trades">
+		SELECT * FROM trades WHERE DATE_SUB(CURDATE(), INTERVAL 7 DAY) <![CDATA[<=]]> trades.`time`
+		ORDER BY `time`
+		DESC
+	</select>
+<!--	查询一周内的发布动态-->
+	<select id="actdis" resultType="com.hhx.body.distribute">
+		SELECT * FROM distribute WHERE DATE_SUB(CURDATE(), INTERVAL 7 DAY)<![CDATA[<=]]> distribute.`time`
+		ORDER BY `time`
+		DESC
+	</select>
+	<select id="reflectname" parameterType="String" resultType="com.hhx.body.User">
+		SELECT * FROM `user` WHERE user.`ID`=#{ID}
+	</select>
+
+<!--	获得聊天消息记录-->
+	<select id="getmsg" parameterType="String" resultType="com.hhx.body.Msg">
+		SELECT * FROM mesg
+	WHERE `to`=#{to} and `isnew` is true
+	ORDER BY `time` ASC
+	</select>
+	<insert id="updatemsg" parameterType="com.hhx.body.Msg">
+		INSERT INTO `mesg` (`from`,`to`,`time`,`isnew`,`content`,`frompic`,`topic`)
+	VALUES(#{from},#{to},#{time},#{isnew},#{content},#{frompic},#{topic})
+	</insert>
+	<select id="getinfo" parameterType="String" resultType="com.hhx.body.User">
+		select * from `user` where `ID`=#{ID}
+	</select>
+
+	<select id="checkmsg" parameterType="String" resultType="String">
+		SELECT DISTINCT `from`
+		FROM `mesg` WHERE `to`=#{to} AND `isnew` IS TRUE
+	</select>
+
+<!--	抹去消息的新-->
+	<update id="becomeold" parameterType="String">
+		UPDATE `mesg`
+	SET `isnew`= FALSE
+	WHERE `to` =#{to}
+	</update>
+
+</mapper>
